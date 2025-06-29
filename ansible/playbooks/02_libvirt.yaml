@@ -1,0 +1,5 @@
+- hosts: rocky_host
+  become: yes
+  gather_facts: yes
+  roles:
+    - libvirt

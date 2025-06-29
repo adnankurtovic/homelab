@@ -1,0 +1,3 @@
+- name: Placeholder task for role 'apps_postgres'
+  debug:
+    msg: ""Role apps_postgres executed.""

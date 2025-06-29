@@ -1,0 +1,5 @@
+# Handlers for role 'opnsense_vm'
+- name: restart service
+  service:
+    name: your_service
+    state: restarted

@@ -1,0 +1,2 @@
+k8s_pod_network_cidr: ""10.244.0.0/16""
+k8s_service_cidr: ""10.96.0.0/12""

@@ -1,0 +1,22 @@
+---
+- name: Wait for kubelet to be ready
+  command: "kubectl wait --for=condition=ready nodes --all --timeout=300s"
+  register: kubelet_ready
+  failed_when: kubelet_ready.rc != 0
+  retries: 10
+  delay: 15
+  until: kubelet_ready.rc == 0
+
+- name: Apply Flannel CNI manifest
+  command: kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/v0.23.3/Documentation/kube-flannel.yml
+  args:
+    warn: false
+  register: flannel_apply
+  failed_when: flannel_apply.rc != 0 and "already exists" not in flannel_apply.stderr
+
+- name: Verify flannel pods are running
+  command: kubectl get pods -n kube-system -l app=flannel -o jsonpath='{.items[*].status.phase}'
+  register: flannel_pod_status
+  until: "'Running' in flannel_pod_status.stdout"
+  retries: 10
+  delay: 15

@@ -1,0 +1,72 @@
+nvme_mount_point: "/mnt/data"
+
+k8s:
+  version: "1.33.2"
+  cgroup_driver: "systemd"
+  pod_network_cidr: "10.244.0.0/16"
+  service_cidr: "10.96.0.0/12"
+
+
+opnsense:
+  vm_name: "opnsense"
+  iso_path: "{{ nvme_mount_point }}/iso/opnsense-23.1.iso"
+  vm_disk_path: "{{ nvme_mount_point }}/vms/opnsense.qcow2"
+  vm_disk_size_gb: 20
+  vm_memory_mb: 2048
+  vm_vcpus: 2
+  lan_network: "virbr-lan"
+  wan_network: "default"
+  force_recreate: false
+  allow_recreate_vm: false
+  uefi_boot: true
+  firmware: "efi"
+  graphics_type: "none"
+  extra_args: "--noautoconsole"
+
+base_os:
+  common_packages:
+    - vim
+    - curl
+    - wget
+    - git
+    - net-tools
+    - htop
+
+  firewalld_services:
+    - ssh
+    - http
+
+  enable_epel: true
+  manage_selinux: true
+  selinux_state: permissive
+
+
+
+libvirt:
+  packages:
+    - qemu-kvm
+    - libvirt
+    - virt-install
+    - bridge-utils
+    - libvirt-daemon-config-network
+    - virt-manager
+
+  user: "{{ ansible_user | default('adnan') }}"
+
+  enable_bridged_network: true
+  bridge_name: br0
+
+  networks:
+    - name: default
+      state: present
+      autostart: true
+      xml: /usr/share/libvirt/networks/default.xml
+
+    - name: virbr-lan
+      state: present
+      autostart: true
+      bridge_name: virbr-lan
+      ip_address: 192.168.100.1
+      netmask: 255.255.255.0
+      stp: on
+      delay: 0

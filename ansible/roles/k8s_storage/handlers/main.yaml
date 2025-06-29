@@ -1,0 +1,5 @@
+# Handlers for role 'k8s_storage'
+- name: restart service
+  service:
+    name: your_service
+    state: restarted

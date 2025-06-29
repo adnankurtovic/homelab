@@ -1,0 +1,19 @@
+---
+libvirt:
+  packages:
+    - qemu-kvm
+    - libvirt
+    - virt-install
+    - bridge-utils
+    - libvirt-daemon-config-network
+    - virt-manager
+
+  user: "{{ ansible_user | default('adnan') }}"
+
+  networks_default_autostart: true
+  enable_bridged_network: false
+  bridge_name: "br0"
+
+  create_internal_network: true
+  internal_network_name: "virbr-lan"
+  internal_network_cidr: "192.168.200.0/24"

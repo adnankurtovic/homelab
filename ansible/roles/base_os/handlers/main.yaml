@@ -1,0 +1,7 @@
+# Handlers for role 'base_os'
+---
+- name: restart firewalld
+  service:
+    name: firewalld
+    state: restarted
+

@@ -1,0 +1,17 @@
+# Default variables for role 'base_os'
+---
+base_os:
+  update_all_packages: true
+  enable_epel: true
+  common_packages:
+  - vim
+  - curl
+  - wget
+  - git
+  - net-tools
+
+  firewalld_services:
+  - ssh
+
+  manage_selinux: false
+  selinux_state: enforcing

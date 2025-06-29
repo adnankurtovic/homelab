@@ -1,0 +1,43 @@
+---
+- name: Ensure all packages are updated
+  dnf:
+    name: '*'
+    state: latest
+  when: base_os.update_all_packages
+
+- name: Enable EPEL repository
+  ansible.builtin.dnf:
+    name: epel-release
+    state: present
+  when: base_os.enable_epel
+
+- name: Install common packages
+  ansible.builtin.dnf:
+    name: "{{ base_os.common_packages }}"
+    state: present
+
+- name: Ensure firewalld is installed
+  ansible.builtin.dnf:
+    name: firewalld
+    state: present
+
+- name: Ensure firewalld is running and enabled
+  ansible.builtin.service:
+    name: firewalld
+    state: started
+    enabled: true
+
+- name: Open required firewalld services
+  ansible.posix.firewalld:
+    service: "{{ item }}"
+    permanent: true
+    state: enabled
+    immediate: yes
+  with_items: "{{ base_os.firewalld_services }}"
+  notify: restart firewalld
+
+- name: Optionally manage SELinux state
+  ansible.posix.selinux:
+    policy: targeted
+    state: "{{ base_os.selinux_state }}"
+  when: base_os.manage_selinux

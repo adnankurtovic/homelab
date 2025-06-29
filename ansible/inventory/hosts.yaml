@@ -1,0 +1,9 @@
+all:
+  hosts:
+    rocky_host:
+      ansible_host: 192.168.1.100
+      ansible_user: adnan
+  children:
+    k8s_nodes:
+      hosts:
+        rocky_host:

@@ -1,0 +1,41 @@
+---
+- name: Install libvirt and virtualization packages
+  dnf:
+    name: "{{ libvirt.packages }}"
+    state: present
+  notify: restart libvirtd
+
+- name: Enable and start libvirtd service
+  service:
+    name: libvirtd
+    state: started
+    enabled: yes
+
+- name: Add user to libvirt group
+  user:
+    name: "{{ libvirt.user }}"
+    groups: libvirt
+    append: yes
+
+- name: Manage libvirt networks
+  community.libvirt.libvirt_network:
+    name: "{{ item.name }}"
+    state: "{{ item.state }}"
+    autostart: "{{ item.autostart | default(true) }}"
+    xml: "{{ item.xml | default(omit) }}"
+    bridge:
+      name: "{{ item.bridge_name | default(omit) }}"
+      stp: "{{ item.stp | default(omit) }}"
+      delay: "{{ item.delay | default(omit) }}"
+    ip:
+      address: "{{ item.ip_address | default(omit) }}"
+      netmask: "{{ item.netmask | default(omit) }}"
+  loop: "{{ libvirt.networks }}"
+
+- name: Ensure Linux bridge exists on host if enabled
+  nmcli:
+    conn_name: "{{ libvirt.bridge_name }}"
+    type: bridge
+    ifname: "{{ libvirt.bridge_name }}"
+    state: present
+  when: libvirt.enable_bridged_network

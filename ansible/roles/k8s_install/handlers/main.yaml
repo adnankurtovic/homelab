@@ -1,0 +1,4 @@
+# Handlers for role 'k8s_install'
+---
+- name: clean yum cache
+  command: yum clean all

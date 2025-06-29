@@ -1,0 +1,3 @@
+- name: Placeholder task for role 'k8s_storage'
+  debug:
+    msg: ""Role k8s_storage executed.""

@@ -1,0 +1,11 @@
+# Default variables for role '  vm'
+---
+opnsense:
+  vm_name: "opnsense"
+  iso_path: "/mnt/data/iso/opnsense-23.1.iso"
+  vm_disk_path: "/mnt/data/vms/opnsense.qcow2"
+  vm_disk_size_gb: 20
+  vm_memory_mb: 2048
+  vm_vcpus: 2
+  lan_network: "virbr-lan"
+  wan_network: "default"

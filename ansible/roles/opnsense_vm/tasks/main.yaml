@@ -1,0 +1,54 @@
+---
+- name: Ensure directory for VM disk exists
+  file:
+    path: "{{ opnsense.vm_disk_path | dirname }}"
+    state: directory
+    mode: '0755'
+
+- name: Check if VM disk image exists
+  stat:
+    path: "{{ opnsense.vm_disk_path }}"
+  register: opnsense_disk_stat
+
+- name: Create VM disk image
+  command: >
+    qemu-img create -f qcow2 {{ opnsense.vm_disk_path }} {{ opnsense.vm_disk_size_gb }}G
+  when: not opnsense_disk_stat.stat.exists
+
+- name: Check if VM already exists
+  command: virsh dominfo {{ opnsense.vm_name }}
+  register: vm_info
+  ignore_errors: yes
+
+- name: Destroy existing VM if allow_recreate_vm is true
+  command: virsh destroy {{ opnsense.vm_name }}
+  when:
+    - opnsense.allow_recreate_vm | bool
+    - vm_info.rc == 0
+
+- name: Undefine existing VM if allow_recreate_vm is true
+  command: virsh undefine {{ opnsense.vm_name }} --remove-all-storage
+  when:
+    - opnsense.allow_recreate_vm | bool
+    - vm_info.rc == 0
+
+- name: Build virt-install command
+  set_fact:
+    virt_install_command: |
+      virt-install
+      --name {{ opnsense.vm_name }}
+      --memory {{ opnsense.vm_memory_mb }}
+      --vcpus {{ opnsense.vm_vcpus }}
+      --disk path={{ opnsense.vm_disk_path }},format=qcow2,bus=virtio
+      --cdrom {{ opnsense.iso_path }}
+      --network network={{ opnsense.wan_network }},model=virtio
+      --network network={{ opnsense.lan_network }},model=virtio
+      --os-type unix
+      --os-variant generic
+      {% if opnsense.firmware == 'efi' %}--boot uefi{% endif %}
+      --graphics {{ opnsense.graphics_type }}
+      {{ opnsense.extra_args }}
+
+- name: Create OPNsense VM with virt-install
+  command: "{{ virt_install_command }}"
+  when: vm_info.rc != 0

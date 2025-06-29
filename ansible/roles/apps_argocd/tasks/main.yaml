@@ -1,0 +1,3 @@
+- name: Placeholder task for role 'apps_argocd'
+  debug:
+    msg: ""Role apps_argocd executed.""

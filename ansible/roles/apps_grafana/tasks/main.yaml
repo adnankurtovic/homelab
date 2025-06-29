@@ -1,0 +1,3 @@
+- name: Placeholder task for role 'apps_grafana'
+  debug:
+    msg: ""Role apps_grafana executed.""
