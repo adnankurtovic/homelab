@@ -1,5 +1,10 @@
 ---
-- name: Install libvirt and virtualization packages
+- name: Fail if libvirt var is not defined
+  fail:
+    msg: "libvirt variable is not loaded!"
+  when: libvirt is not defined
+
+- name: Install required libvirt packages
   dnf:
     name: "{{ libvirt.packages }}"
     state: present
@@ -9,33 +14,67 @@
   service:
     name: libvirtd
     state: started
-    enabled: yes
+    enabled: true
 
 - name: Add user to libvirt group
   user:
     name: "{{ libvirt.user }}"
     groups: libvirt
-    append: yes
+    append: true
 
-- name: Manage libvirt networks
-  community.libvirt.libvirt_network:
+# Optional - ensure /tmp exists (normally always true)
+- name: Ensure /tmp directory exists
+  file:
+    path: /tmp
+    state: directory
+
+# Define libvirt networks from XML (use state: present)
+- name: Define libvirt networks from inline XML
+  community.libvirt.virt_net:
+    command: define
     name: "{{ item.name }}"
-    state: "{{ item.state }}"
-    autostart: "{{ item.autostart | default(true) }}"
-    xml: "{{ item.xml | default(omit) }}"
-    bridge:
-      name: "{{ item.bridge_name | default(omit) }}"
-      stp: "{{ item.stp | default(omit) }}"
-      delay: "{{ item.delay | default(omit) }}"
-    ip:
-      address: "{{ item.ip_address | default(omit) }}"
-      netmask: "{{ item.netmask | default(omit) }}"
+    xml: "{{ item.xml_content }}"
+  loop: "{{ libvirt.networks | selectattr('xml_content', 'defined') | list }}"
+  when: item.xml_content is defined
+
+# Ensure networks are active and autostart
+- name: Ensure libvirt networks are active and autostart
+  community.libvirt.virt_net:
+    name: "{{ item.name }}"
+    state: active
+    autostart: "{{ item.autostart }}"
   loop: "{{ libvirt.networks }}"
 
+# Create Linux bridge on host if enabled
 - name: Ensure Linux bridge exists on host if enabled
-  nmcli:
+  community.general.nmcli:
     conn_name: "{{ libvirt.bridge_name }}"
     type: bridge
     ifname: "{{ libvirt.bridge_name }}"
     state: present
-  when: libvirt.enable_bridged_network
+  when: libvirt.enable_bridged_network | bool
+
+# Add eno2 as a bridge slave using nmcli module
+- name: Add eno2 as slave to br-lan
+  community.general.nmcli:
+    conn_name: eno2-slave-br-lan
+    type: bridge-slave
+    ifname: eno2
+    master: br-lan
+    state: present
+    autoconnect: yes
+  when: libvirt.enable_bridged_network | bool
+
+# Bring up bridge connection
+- name: Bring up bridge connection
+  community.general.nmcli:
+    conn_name: br-lan
+    state: up
+  when: libvirt.enable_bridged_network | bool
+
+# Bring up eno2 slave connection
+- name: Bring up eno2 slave connection
+  community.general.nmcli:
+    conn_name: eno2-slave-br-lan
+    state: up
+  when: libvirt.enable_bridged_network | bool

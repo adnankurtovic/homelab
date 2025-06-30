@@ -1,8 +1,12 @@
 all:
   hosts:
     rocky_host:
-      ansible_host: 192.168.1.100
       ansible_user: adnan
+      ansible_host: 192.168.0.182
+      ansible_ssh_pass: "Informatika25!"
+      ansible_become: true
+      ansible_become_method: sudo
+      ansible_become_pass: "Informatika25!"
   children:
     k8s_nodes:
       hosts:

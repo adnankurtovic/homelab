@@ -1,0 +1,54 @@
+---
+- name: Ensure directory for VM disk exists
+  file:
+    path: "{{ pfsense.vm_disk_path | dirname }}"
+    state: directory
+    mode: '0755'
+
+- name: Check if VM disk image exists
+  stat:
+    path: "{{ pfsense.vm_disk_path }}"
+  register: pfsense_disk_stat
+
+- name: Create VM disk image
+  command: >
+    qemu-img create -f qcow2 {{ pfsense.vm_disk_path }} {{ pfsense.vm_disk_size_gb }}G
+  when: not pfsense_disk_stat.stat.exists
+
+- name: Check if VM already exists
+  command: virsh dominfo {{ pfsense.vm_name }}
+  register: vm_info
+  ignore_errors: yes
+
+- name: Destroy existing VM if allow_recreate_vm is true
+  command: virsh destroy {{ pfsense.vm_name }}
+  when:
+    - pfsense.allow_recreate_vm | bool
+    - vm_info.rc == 0
+
+- name: Undefine existing VM if allow_recreate_vm is true
+  command: virsh undefine {{ pfsense.vm_name }} --nvram
+  when:
+    - pfsense.allow_recreate_vm | bool
+    - vm_info.rc == 0
+
+- name: Build virt-install command
+  set_fact:
+    virt_install_command: |
+      virt-install
+      --name {{ pfsense.vm_name }}
+      --memory {{ pfsense.vm_memory_mb }}
+      --vcpus {{ pfsense.vm_vcpus }}
+      --disk path={{ pfsense.vm_disk_path }},format=qcow2,bus=virtio
+      --cdrom {{ pfsense.iso_path }}
+      --network network={{ pfsense.wan_network }},model=virtio
+      --network network={{ pfsense.lan_network }},model=virtio
+      --os-type unix
+      --os-variant {{ pfsense.os_variant }}
+      {% if pfsense.firmware == 'efi' %}--boot uefi{% endif %} 
+      --graphics {{ pfsense.graphics_type }}
+      {{ pfsense.extra_args }}
+
+- name: Create pfsense VM with virt-install
+  command: "{{ virt_install_command }}"
+  when: vm_info.rc != 0

@@ -11,8 +11,8 @@ libvirt:
   user: "{{ ansible_user | default('adnan') }}"
 
   networks_default_autostart: true
-  enable_bridged_network: false
-  bridge_name: "br0"
+  enable_bridged_network: true
+  bridge_name: "br-lan"
 
   create_internal_network: true
   internal_network_name: "virbr-lan"

@@ -1,5 +1,9 @@
 - hosts: rocky_host
   become: yes
+  vars_files:
+    - ../group_vars/all.yaml
+  collections:
+    - community.libvirt
   gather_facts: yes
   roles:
     - libvirt

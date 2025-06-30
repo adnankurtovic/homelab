@@ -1,0 +1,16 @@
+# Default variables for role '  vm'
+---
+pfsense:
+  vm_name: "pfsense"
+  iso_path: "/mnt/data/iso/netgate-installer-amd64.iso"
+  vm_disk_path: "/mnt/data/vms/pfsense.qcow2"
+  vm_disk_size_gb: 20
+  vm_memory_mb: 2048
+  vm_vcpus: 2
+  lan_network: "virbr-lan"
+  wan_network: "default"
+  allow_recreate_vm: false
+  firmware: "efi"
+  graphics_type: "none"
+  extra_args: "--noautoconsole"
+  os_variant: "generic"
