@@ -1,3 +1,16 @@
-- name: Placeholder task for role 'k8s_storage'
-  debug:
-    msg: ""Role k8s_storage executed.""
+- name: Apply local-path-provisioner manifest
+  kubernetes.core.k8s:
+    state: present
+    src: local-path-provisioner.yaml
+
+- name: Set 'local-path' StorageClass as default
+  kubernetes.core.k8s:
+    api_version: storage.k8s.io/v1
+    kind: StorageClass
+    name: local-path
+    state: present
+    definition:
+      metadata:
+        annotations:
+          storageclass.kubernetes.io/is-default-class: "true"
+
