@@ -4,68 +4,45 @@
 
 This repository contains Ansible playbooks and documentation for automating the setup of my personal homelab on a Lenovo ThinkCentre M920q running Rocky Linux.
 
-## 📜 Overview
+## 🎯 Project Goal
 
-This homelab project uses DevOps practices to provision and configure:
-
-- A Rocky Linux 10 host system with KVM/libvirt for virtualization.
-- A pfSense VM for routing, firewall, and network isolation.
-- A Home Assistant VM for smart home management.
-- A Kubernetes (k8s) cluster on the Rocky Linux host for running:
-  - Grafana (monitoring)
-  - Prometheus (metrics collection)
-  - Loki (logs)
-  - Additional DevOps tools for learning (e.g. Jenkins, ArgoCD, etc.)
+The primary goal of this project is to completely automate the deployment and configuration of a home lab environment using Ansible. This includes provisioning the base operating system, setting up virtualization, deploying a Kubernetes cluster, and installing various applications.
 
 ---
 
-## 🗺️ Planned Architecture
+## 💻 Technology Stack
 
-[Internet]
-|
-[Home Wi-Fi Router] ---(Wi-Fi)--> [Lenovo ThinkCentre M920q (Rocky Linux)]
-|
-[pfSense VM]
-/          |
-[LAN port] [WAN over Wi-Fi]
-|
-[TP-Link TL-WR740N Router]
-|
-[Smart Home / IoT Devices on Separate SSID]
+### Hardware
+- **Compute:** Lenovo Mini PC (16GB RAM, 2 NICs)
+- **Storage:** D-Link DNS320 NAS
+- **Networking:** TP-Link 720n (acting as a switch and wireless access point)
 
-- pfSense VM provides a fully isolated LAN subnet for IoT devices.
-- The Rocky Linux host bridges the WAN interface over Wi-Fi and the LAN interface over its Ethernet port.
-- TP-Link router connected to the ThinkCentre's LAN port provides extra ports and Wi-Fi SSID for smart home devices.
-
----
-
-## ⚙️ Components
-
+### Software
 | Component                  | Role                                          | Deployment              |
 |----------------------------|-----------------------------------------------|-------------------------|
-| **Rocky Linux 10**         | Host OS                                       | Bare metal              |
-| **KVM/Libvirt**            | Virtualization for pfSense and Home Assistant | Managed via Ansible     |
-| **pfSense VM**             | Network routing, firewall, VLAN separation    | KVM VM                  |
-| **Home Assistant VM**      | Smart home automation platform                | KVM VM                  |
-| **Kubernetes (k8s)**       | Container orchestration                       | Single node on Rocky Linux |
+| **Host OS**                | Rocky Linux 10                                | Bare metal              |
+| **Virtualization**         | KVM/QEMU managed by `libvirt`                 | Managed via Ansible     |
+| **Firewall/Router**        | pfSense                                       | KVM VM                  |
+| **Container Orchestration**| Kubernetes (k8s), installed via `kubeadm`     | Single node on Rocky Linux |
+| **Configuration Mgmt**     | Ansible                                       | Bare metal/VM           |
 | **local-path-provisioner** | Local storage provisioner for Kubernetes      | Kubernetes              |
-| **Grafana**                | Monitoring and dashboards                     | Kubernetes              |
-| **Prometheus**             | Metrics collection                            | Kubernetes              |
-| **Other DevOps Tools**     | Learning and experimentation                  | Kubernetes              |
+| **Home Assistant**         | Smart home automation platform                | Kubernetes/KVM VM       |
+| **Grafana**                | Monitoring and visualization                  | Kubernetes              |
+| **PostgreSQL**             | Database for various applications             | Kubernetes              |
+| **Jenkins**                | CI/CD pipelines                               | Kubernetes              |
+| **ArgoCD**                 | GitOps-based continuous delivery              | Kubernetes              |
+| **Nextcloud**              | File storage and collaboration (to be implemented) | Kubernetes              |
 
 ---
 
-## 🚀 Goals
+## 🏛️ Architecture
 
-✅ Automate installation and configuration with Ansible
-✅ Isolate IoT/Smart Home devices on a separate subnet
-✅ Learn and practice:
-  - Infrastructure-as-Code
-  - Virtualization
-  - Networking
-  - Kubernetes
-  - Monitoring and logging
-  - CI/CD and DevOps tools
+The architecture is designed in layers, with each layer building upon the previous one:
+
+1.  **Host Layer:** A bare-metal Lenovo Mini PC running Rocky Linux 10 serves as the foundation.
+2.  **Virtualization Layer:** `libvirt` is installed on the host to manage virtual machines. A pfSense VM is created to act as the primary router and firewall for the entire home network. It is connected to a dedicated physical NIC via a Linux bridge.
+3.  **Orchestration Layer:** A standard Kubernetes (k8s) cluster is installed on the Rocky Linux host. This cluster will host all the home lab applications.
+4.  **Application Layer:** Various applications are deployed on the Kubernetes cluster.
 
 ---
 
