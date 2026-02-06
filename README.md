@@ -49,7 +49,7 @@ The architecture is designed in layers, with each layer building upon the previo
 ## 📦 Repository Structure
 
 Example planned layout:
-
+```
 ansible/
 ├── inventory/
 │   └── hosts.yaml
@@ -79,6 +79,7 @@ ansible/
 ├── requirements.yaml
 ├── ansible.cfg
 └── generate-skeleton-homelab.ps1
+```
 
 - **inventories/**: Define hosts and groups.
 - **roles/**: Reusable roles for configuring each part of the system.
@@ -109,8 +110,8 @@ Internet connection over Wi-Fi
 pfSense VM:
 
 Needs bridged networking.
-WAN interface = Wi-Fi adapter.
-LAN interface = Physical Ethernet NIC.
+WAN interface = Physical Ethernet NIC (connected to router).
+LAN interface = Physical Ethernet NIC (for internal LAN).
 
 Home Assistant VM:
 Runs as a dedicated VM for best USB/Zigbee/Z-Wave support.
