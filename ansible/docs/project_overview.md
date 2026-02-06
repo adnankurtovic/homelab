@@ -19,6 +19,7 @@ The primary goal of this project is to completely automate the deployment and co
 - **Firewall/Router:** pfSense (running as a virtual machine)
 - **Container Orchestration:** Kubernetes (k8s), installed via `kubeadm`
 - **Configuration Management:** Ansible
+- **Infrastructure as Code (Apps):** Terraform
 
 ## 3. Architecture
 
@@ -30,7 +31,7 @@ The architecture is designed in layers, with each layer building upon the previo
 
 3.  **Orchestration Layer:** A standard Kubernetes (k8s) cluster is installed on the Rocky Linux host. This cluster will host all the home lab applications.
 
-4.  **Application Layer:** Various applications are deployed on the Kubernetes cluster, including:
+4.  **Application Layer:** Various applications are deployed on the Kubernetes cluster using Terraform, including:
     - **Home Assistant:** For smart home automation.
     - **Grafana:** For monitoring and visualization.
     - **PostgreSQL:** As a database for various applications.

@@ -32,6 +32,7 @@ The primary goal of this project is to completely automate the deployment and co
 | **Jenkins**                | CI/CD pipelines                               | Kubernetes              |
 | **ArgoCD**                 | GitOps-based continuous delivery              | Kubernetes              |
 | **Nextcloud**              | File storage and collaboration (to be implemented) | Kubernetes              |
+| **Terraform**              | Infrastructure as Code for Kubernetes applications | Kubernetes              |
 
 ---
 
