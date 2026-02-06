@@ -5,7 +5,7 @@ $Root = "C:\Users\korisnik\ansible"
 $Roles = @(
     "base_os",
     "libvirt",
-    "opnsense_vm",
+    "pfsense_vm",
     "k8s_install",
     "k8s_networking",
     "k8s_storage",
@@ -48,8 +48,8 @@ all:
 
 # Create group_vars/all.yaml
 Set-Content -Path "$Root\group_vars\all.yaml" -Value @"
-nvme_mount_point: ""/mnt/data""
-k8s_version: ""1.33.2""
+nvme_mount_point: "/mnt/data"
+k8s_version: "1.33.2"
 common_packages:
   - vim
   - curl
@@ -57,14 +57,14 @@ common_packages:
   - git
   - net-tools
 
-opnsense:
-  iso_path: ""{{ nvme_mount_point }}/iso/opnsense.iso""
-  vm_disk_path: ""{{ nvme_mount_point }}/vms/opnsense.qcow2""
+pfsense:
+  iso_path: "{{ nvme_mount_point }}/iso/netgate-installer-amd64.iso"
+  vm_disk_path: "{{ nvme_mount_point }}/vms/pfsense.qcow2"
   vm_disk_size_gb: 20
   vm_memory_mb: 2048
   vm_vcpus: 2
-  lan_network: ""virbr-lan""
-  wan_network: ""default""
+  lan_network: "virbr-lan"
+  wan_network: "default"
 "@
 
 # Create group_vars/k8s_nodes.yaml

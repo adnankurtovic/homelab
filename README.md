@@ -2,7 +2,7 @@
 
 
 
-\# Homelab Automation with Ansible
+\# Homelab - Automation with Ansible
 
 
 
@@ -10,7 +10,7 @@ This repository contains Ansible playbooks and documentation for automating the 
 
 
 
-\## 📜 Overview
+📜 Overview
 
 
 
@@ -18,7 +18,7 @@ This homelab project uses DevOps practices to provision and configure:
 
 
 
-\- A Rocky Linux 9 host system with KVM/libvirt for virtualization.
+\- A Rocky Linux 10 host system with KVM/libvirt for virtualization.
 
 \- A pfSense VM for routing, firewall, and network isolation.
 
@@ -40,7 +40,7 @@ This homelab project uses DevOps practices to provision and configure:
 
 
 
-\## 🗺️ Planned Architecture
+🗺️ Planned Architecture
 
 
 
@@ -82,7 +82,7 @@ This homelab project uses DevOps practices to provision and configure:
 
 
 
-\## ⚙️ Components
+⚙️ Components
 
 
 
@@ -98,7 +98,7 @@ This homelab project uses DevOps practices to provision and configure:
 
 | \*\*Home Assistant VM\*\*  | Smart home automation platform                | KVM VM                  |
 
-| \*\*Kubernetes (k3s or full k8s)\*\* | Container orchestration             | Single node on Rocky Linux |
+| \*\*Kubernetes (k8s)\*\*   | Container orchestration                       | Single node on Rocky Linux |
 
 | \*\*Grafana\*\*            | Monitoring and dashboards                     | Kubernetes              |
 
@@ -112,7 +112,7 @@ This homelab project uses DevOps practices to provision and configure:
 
 
 
-\## 🚀 Goals
+🚀 Goals
 
 
 
@@ -122,17 +122,17 @@ This homelab project uses DevOps practices to provision and configure:
 
 ✅ Learn and practice:
 
-\- Infrastructure-as-Code
+&nbsp;- Infrastructure-as-Code
 
-\- Virtualization
+&nbsp;- Virtualization
 
-\- Networking
+&nbsp;- Networking
 
-\- Kubernetes
+&nbsp;- Kubernetes
 
-\- Monitoring and logging
+&nbsp;- Monitoring and logging
 
-\- CI/CD and DevOps tools
+&nbsp;- CI/CD and DevOps tools
 
 
 
@@ -140,7 +140,7 @@ This homelab project uses DevOps practices to provision and configure:
 
 
 
-\## 📦 Repository Structure
+📦 Repository Structure
 
 
 
@@ -174,7 +174,7 @@ ansible/
 
 │ └── apps\_jenkins/
 
-└── playbooks/
+├── playbooks/
 
 │ ├── 01\_base\_os.yaml
 
@@ -188,9 +188,21 @@ ansible/
 
 │ ├── 06\_k8s\_storage.yaml
 
-│ ├── 07\_apps.yaml
+│ └── 07\_apps.yaml
 
-└── requirements.yaml
+├── collections/
+
+├── group\_vars/
+
+│ ├── all.yaml
+
+│ └── k8s\_nodes.yaml
+
+├── requirements.yaml
+
+├── ansible.cfg
+
+└── generate-skeleton-homelab.ps1
 
 
 
@@ -202,13 +214,15 @@ ansible/
 
 \- \*\*playbooks/\*\*: Entry points for Ansible runs.
 
+\- \*\*generate-skeleton-homelab.ps1\*\*: Helper PowerShell script used to create Ansible skeleton. 
+
 
 
 ---
 
 
 
-\## 🛠️ Usage
+🛠️ Usage
 
 
 
@@ -224,13 +238,13 @@ ansible-playbook -i inventory/hosts.yaml playbooks/02\_libvirt.yaml
 
 
 
-\## 📝 Requirements
+📝 Requirements
 
 
 
-Rocky Linux 9 host
+Rocky Linux 10.0 (Red Quartz) host
 
-Ansible 2.14+
+Ansible 2.18+
 
 libvirt and QEMU installed
 
@@ -244,7 +258,7 @@ Internet connection over Wi-Fi
 
 
 
-\## 💡 Notes and Considerations
+💡 Notes and Considerations
 
 pfSense VM:
 
@@ -266,7 +280,7 @@ Runs as a dedicated VM for best USB/Zigbee/Z-Wave support.
 
 Kubernetes:
 
-Single-node deployment (recommended: k3s for simplicity).
+Single-node deployment.
 
 Lightweight manifests for Grafana, Prometheus, etc.
 
@@ -282,7 +296,13 @@ Limit number of running pods and services.
 
 
 
-\## 🤝 Contributing
+🤝 Contributing
 
 PRs welcome! This is primarily for personal learning and use, but improvements and fixes are always appreciated.
+
+
+
+📜 License
+
+MIT License
 
